@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
-import 'package:riniel_chat/domain/chat.dart';
-import 'package:riniel_chat/domain/character.dart';
+import 'package:riniel_chat/domain/character/model/character.dart';
+import 'package:riniel_chat/domain/chat/model/chat.dart';
 import 'package:uuid/uuid.dart';
 
 class MessageAuthorNotProvided implements Exception {

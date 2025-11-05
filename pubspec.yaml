@@ -12,19 +12,22 @@ dependencies:
   equatable: ^2.0.7
   flutter:
     sdk: flutter
-  image_picker: ^1.1.2
   uuid: ^4.5.1
   flex_color_picker: ^3.7.1
   flutter_launcher_icons: ^0.14.4
   bloc: ^9.0.1
   flutter_bloc: ^9.1.1
   shared_preferences: ^2.5.3
+  rxdart: ^0.28.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^6.0.0
 
 flutter:
+
+  assets:
+   - assets/
+
   uses-material-design: true

@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:riniel_chat/domain/character.dart';
+import 'package:riniel_chat/domain/character/model/character.dart';
 
 class CharacterAvatar extends StatelessWidget {
   const CharacterAvatar({super.key, required this.character, this.onTap});

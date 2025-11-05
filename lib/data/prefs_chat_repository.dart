@@ -1,29 +1,18 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
+// import 'dart:async';
+// import 'dart:convert';
+// import 'dart:io';
 
-import 'package:riniel_chat/domain/chat.dart';
-import 'package:riniel_chat/domain/message.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:riniel_chat/domain/chat/model/chat.dart';
+// import 'package:riniel_chat/shared/message.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
-// class MessageDto {
-//   const MessageDto._({
-//     required this.id,
-//     required this.chatId,
-//     required this.authorId,
-//     required this.text,
-//     required this.attachmentSrc,
-//     required this.createdAt,
-//     required this.updatedAt,
-//     required this.deletedAt,
-//   });
-
-//   factory MessageDto.fromJson(Map<String, dynamic> json) => MessageDto._(
+// extension _MessageMapper on Message {
+//   static Message fromPrefs(Map<String, dynamic> json) => Message.persisted(
 //     id: json['id'],
 //     chatId: json['chat_id'],
 //     authorId: json['author_id'],
 //     text: json['text'],
-//     attachmentSrc: json['attachement_src'],
+//     attachment: File(json['attachment_path']),
 //     createdAt: DateTime.parse(json['created_at']),
 //     updatedAt: DateTime.parse(json['updated_at']),
 //     deletedAt: json['deleted_at'] is String
@@ -31,161 +20,102 @@ import 'package:shared_preferences/shared_preferences.dart';
 //         : null,
 //   );
 
-//   factory MessageDto.fromDomain(Message message) => MessageDto._(
-//     id: message.id,
-//     chatId: message.chatId,
-//     authorId: message.authorId,
-//     text: message.text,
-//     attachmentSrc: message.attachment?.path,
-//     createdAt: message.createdAt,
-//     updatedAt: message.updatedAt,
-//     deletedAt: message.deletedAt,
-//   );
-
-//   Map<String, dynamic> toJson() => {
+//   Map<String, dynamic> toPrefs() => {
 //     'id': id,
 //     'chat_id': chatId,
 //     'author_id': authorId,
-//     'text': text ?? '',
-//     'attachment_src': attachmentSrc,
+//     'text': text,
+//     if (attachment != null) 'attachment_path': attachment!.path,
 //     'created_at': createdAt.toIso8601String(),
 //     'updated_at': updatedAt.toIso8601String(),
-//     if (deletedAt != null) 'deleted_at': deletedAt!.toIso8601String(),
+//     'deleted_at': deletedAt!.toIso8601String(),
 //   };
-
-//   Message toDomain() => Message.persisted(
-//     id: id,
-//     chatId: chatId,
-//     authorId: authorId,
-//     text: text ?? '',
-//     attachment: attachmentSrc == null
-//         ? null
-//         : File.fromUri(Uri.file(attachmentSrc!)),
-//     createdAt: createdAt,
-//     updatedAt: updatedAt,
-//     deletedAt: deletedAt,
-//   );
-
-//   final String id;
-//   final String chatId;
-//   final String authorId;
-//   final String? text;
-//   final String? attachmentSrc;
-//   final DateTime createdAt;
-//   final DateTime updatedAt;
-//   final DateTime? deletedAt;
 // }
 
-extension _MessageDto on Message {
-  static Message fromPrefs(Map<String, dynamic> json) => Message.persisted(
-    id: json['id'],
-    chatId: json['chat_id'],
-    authorId: json['author_id'],
-    text: json['text'],
-    attachment: File(json['attachment_path']),
-    createdAt: DateTime.parse(json['created_at']),
-    updatedAt: DateTime.parse(json['updated_at']),
-    deletedAt: json['deleted_at'] is String
-        ? DateTime.parse(json['deleted_at'])
-        : null,
-  );
+// extension _ChatDto on Chat {
+//   static Chat fromPrefs(Map<String, dynamic> json) => Chat(
+//     id: json['id'],
+//     participants: json['participants'],
+//     messages:
+//         (json['messages'] as List?)
+//             ?.map((m) => _MessageMapper.fromPrefs(m))
+//             .toList() ??
+//         const [],
+//     backgroundImage: json['backgroun_image_path'] == null
+//         ? null
+//         : File.fromUri(Uri.parse(json['background_image_path'])),
+//     themeColor: json['theme_color'],
+//     createdAt: DateTime.parse(json['created_at']),
+//     updatedAt: DateTime.parse(json['updated_at']),
+//     deletedAt: json['deleted_at'] == null
+//         ? null
+//         : DateTime.parse(json['deleted_at']),
+//   );
 
-  Map<String, dynamic> toPrefs() => {
-    'id': id,
-    'chat_id': chatId,
-    'author_id': authorId,
-    'text': text,
-    if (attachment != null) 'attachment_path': attachment!.path,
-    'created_at': createdAt.toIso8601String(),
-    'updated_at': updatedAt.toIso8601String(),
-    'deleted_at': deletedAt!.toIso8601String(),
-  };
-}
+//   Map<String, dynamic> toPrefs() => {
+//     'id': id,
+//     'participants': participants,
+//     'messages': messages.map((m) => m.toPrefs()).toList(),
+//     'background_image_path': backgroundImage?.path,
+//     'theme_color_code': themeColor.toARGB32(),
+//     'created_at': createdAt.toIso8601String(),
+//     'updated_at': updatedAt.toIso8601String(),
+//     'deleted_at': deletedAt?.toIso8601String(),
+//   };
+// }
 
-extension _ChatDto on Chat {
-  static Chat fromPrefs(Map<String, dynamic> json) => Chat(
-    id: json['id'],
-    participants: json['participants'],
-    messages:
-        (json['messages'] as List?)
-            ?.map((m) => _MessageDto.fromPrefs(m))
-            .toList() ??
-        const [],
-    backgroundImage: json['backgroun_image_path'] == null
-        ? null
-        : File.fromUri(Uri.parse(json['background_image_path'])),
-    themeColor: json['theme_color'],
-    createdAt: DateTime.parse(json['created_at']),
-    updatedAt: DateTime.parse(json['updated_at']),
-    deletedAt: json['deleted_at'] == null
-        ? null
-        : DateTime.parse(json['deleted_at']),
-  );
+// class ChatPrefsRepository implements ChatRepository {
+//   const ChatPrefsRepository(this._prefs);
 
-  Map<String, dynamic> toPrefs() => {
-    'id': id,
-    'participants': participants,
-    'messages': messages.map((m) => m.toPrefs()).toList(),
-    'background_image_path': backgroundImage?.path,
-    'theme_color_code': themeColor.toARGB32(),
-    'created_at': createdAt.toIso8601String(),
-    'updated_at': updatedAt.toIso8601String(),
-    'deleted_at': deletedAt?.toIso8601String(),
-  };
-}
+//   final SharedPreferences _prefs;
+//   static const _key = '_chat';
 
-class ChatPrefsRepository implements ChatRepository {
-  const ChatPrefsRepository(this._prefs);
+//   @override
+//   List<Chat> list() {
+//     return _prefs
+//             .getStringList(_key)
+//             ?.map((message) => _ChatDto.fromPrefs(jsonDecode(message)))
+//             .toList() ??
+//         [];
+//   }
 
-  final SharedPreferences _prefs;
-  static const _key = '_chat';
+//   @override
+//   Chat find(ChatId id) => list().singleWhere(
+//     (ch) => ch.id == id,
+//     orElse: () => throw "Чат не найден",
+//   );
 
-  @override
-  List<Chat> list() {
-    return _prefs
-            .getStringList(_key)
-            ?.map((message) => _ChatDto.fromPrefs(jsonDecode(message)))
-            .toList() ??
-        [];
-  }
+//   @override
+//   FutureOr<void> save(Chat chat) async {
+//     final chats = list();
 
-  @override
-  Chat find(ChatId id) => list().singleWhere(
-    (ch) => ch.id == id,
-    orElse: () => throw "Чат не найден",
-  );
+//     final index = chats.indexWhere((ch) => ch.id == chat.id);
 
-  @override
-  FutureOr<void> save(Chat chat) async {
-    final chats = list();
+//     if (index != -1) {
+//       chats[index] = chat;
+//     } else {
+//       chats.add(chat);
+//     }
 
-    final index = chats.indexWhere((ch) => ch.id == chat.id);
+//     await _set(chats);
+//   }
 
-    if (index != -1) {
-      chats[index] = chat;
-    } else {
-      chats.add(chat);
-    }
+//   @override
+//   FutureOr<void> remove(MessageId id) async {
+//     final chats = list();
+//     final index = chats.indexWhere((ch) => ch.id == id);
 
-    await _set(chats);
-  }
+//     if (index != -1) {
+//       chats.removeAt(index);
 
-  @override
-  FutureOr<void> remove(MessageId id) async {
-    final chats = list();
-    final index = chats.indexWhere((ch) => ch.id == id);
+//       await _set(chats);
+//     }
+//   }
 
-    if (index != -1) {
-      chats.removeAt(index);
-
-      await _set(chats);
-    }
-  }
-
-  Future<void> _set(List<Chat> chats) async {
-    await _prefs.setStringList(
-      _key,
-      chats.map((chat) => jsonEncode(chat.toPrefs())).toList(),
-    );
-  }
-}
+//   Future<void> _set(List<Chat> chats) async {
+//     await _prefs.setStringList(
+//       _key,
+//       chats.map((chat) => jsonEncode(chat.toPrefs())).toList(),
+//     );
+//   }
+// }

@@ -5,10 +5,11 @@ import 'package:equatable/equatable.dart';
 import 'package:uuid/uuid.dart';
 
 abstract interface class CharacterRepository {
+  Stream<List<Character>> watch();
   FutureOr<List<Character>> list();
-  FutureOr<Character> find(CharacterId id);
+  FutureOr<Character?> find(CharacterId id);
   FutureOr<void> save(Character character);
-  Future<void> remove(CharacterId id);
+  FutureOr<void> remove(CharacterId id);
 }
 
 typedef CharacterId = String;
@@ -17,53 +18,53 @@ class Character with EquatableMixin {
   Character({
     required this.id,
     required this.name,
+    required this.note,
     required this.avatar,
     required this.createdAt,
     required this.updatedAt,
-    required this.deletedAt,
   }) {
     if (name.isEmpty) {
       throw "Имя пользователя не может быть пустым";
     }
   }
 
-  factory Character.create({required final String name, final File? avatar}) =>
-      Character(
-        id: Uuid().v4(),
-        name: name,
-        avatar: avatar,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        deletedAt: null,
-      );
+  factory Character.create({
+    required final String name,
+    final File? avatar,
+    String note = '',
+  }) => Character(
+    id: Uuid().v4(),
+    name: name,
+    note: note,
+    avatar: avatar,
+    createdAt: DateTime.now(),
+    updatedAt: DateTime.now(),
+  );
 
   final CharacterId id;
   final String name;
+  final String note;
   final File? avatar;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final DateTime? deletedAt;
 
   @override
-  List<Object?> get props => [
-    id,
-    name,
-    avatar,
-    createdAt,
-    updatedAt,
-    deletedAt,
-  ];
+  List<Object?> get props => [id, name, note, avatar, createdAt, updatedAt];
 }
 
 extension ParticipantMutations on Character {
-  Character _update({final String? name, final File? avatar}) {
+  Character _update({
+    final String? name,
+    final File? avatar,
+    final String? note,
+  }) {
     return Character(
       id: id,
       name: name ?? this.name,
       avatar: avatar ?? this.avatar,
+      note: note ?? this.note,
       createdAt: createdAt,
       updatedAt: DateTime.now(),
-      deletedAt: deletedAt,
     );
   }
 

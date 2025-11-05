@@ -3,17 +3,10 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:equatable/equatable.dart';
-import 'package:riniel_chat/domain/message.dart';
-import 'package:riniel_chat/domain/character.dart';
+import 'package:riniel_chat/domain/character/model/character.dart';
+import 'package:riniel_chat/shared/message.dart';
 
 typedef ChatId = String;
-
-abstract interface class ChatRepository {
-  FutureOr<List<Chat>> list();
-  FutureOr<Chat> find(ChatId id);
-  FutureOr<void> save(Chat chat);
-  FutureOr<void> remove(MessageId id);
-}
 
 class Chat with EquatableMixin {
   const Chat({
@@ -101,12 +94,11 @@ extension ChatMutations on Chat {
   Chat updateThemeColor(Color color) => _copyWith(themeColor: color);
 
   Chat changeBackgroundImage(File image) => _copyWith(backgroundImage: image);
+}
 
-  // Chat setReceiverAvatar(File image) =>
-  //     _copyWith(receiver: receiver.setAvatar(image));
-
-  // Chat setReceiverName(String name) =>
-  //     _copyWith(receiver: receiver.setName(name));
-
-  // Chat toggleUser() => _copyWith(sender: receiver, receiver: sender);
+abstract interface class ChatRepository {
+  FutureOr<List<Chat>> list();
+  FutureOr<Chat> find(ChatId id);
+  FutureOr<void> save(Chat chat);
+  FutureOr<void> remove(MessageId id);
 }

@@ -1,6 +1,6 @@
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:riniel_chat/presentation/constants.dart';
+import 'package:riniel_chat/shared/ui/constants.dart';
 
 class ColorPickerDialog extends StatefulWidget {
   const ColorPickerDialog({
@@ -50,11 +50,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                   ...ThemeMode.values.map(
                     (tm) => Column(
                       children: [
-                        Radio(
-                          groupValue: widget.activeThemeMode,
-                          value: tm,
-                          onChanged: widget.onThemeModeChanged,
-                        ),
+                        Radio(value: tm),
 
                         Text(tm.name.capitalize),
                       ],

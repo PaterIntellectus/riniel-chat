@@ -1,64 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:riniel_chat/data/prefs_character_repo.dart';
-import 'package:riniel_chat/domain/chat.dart';
-import 'package:riniel_chat/presentation/screens/chat_list_screen.dart';
-import 'package:riniel_chat/presentation/screens/chat_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
+import 'package:riniel_chat/domain/character/model/character.dart';
+import 'package:riniel_chat/domain/character/ui/repository_provider.dart';
+import 'package:riniel_chat/screen/home/ui/screen.dart';
 
-final chat = Chat(
-  id: Uuid().v4(),
-  participants: [],
-  messages: const [],
-  themeColor: Color(0xffffffff),
-  backgroundImage: null,
-  createdAt: DateTime.now(),
-  updatedAt: DateTime.now(),
-  deletedAt: null,
-);
+class App extends StatefulWidget {
+  const App({super.key, required this.characterRepository});
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final CharacterRepository characterRepository;
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<App> createState() => _AppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _AppState extends State<App> {
   var themeMode = ThemeMode.system;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Riniel Chat',
-      themeMode: themeMode,
-      theme: ThemeData.from(colorScheme: ColorScheme.light()),
-      darkTheme: ThemeData.from(colorScheme: ColorScheme.dark()),
-      routes: {
-        '/': (context) => FutureBuilder(
-          future: SharedPreferences.getInstance(),
-          builder: (context, snapshot) {
-            if (snapshot.data == null) {
-              return Scaffold(body: Center(child: Text('Loading')));
-            }
-
-            return ChatListScreen(
-              characterRepo: CharacterPrefsRepository(snapshot.data!),
-            );
-          },
-        ),
-        '/chat': (context) => ChatScreen(
-          chat: chat,
-          activeThemeMode: themeMode,
-          onThemeModeChanged: (tm) {
-            print('callback:tm: $tm');
-
-            if (tm != null) {
-              setState(() => themeMode = tm);
-            }
-          },
-        ),
-      },
+    return CharacterRepositoryProvider(
+      repository: widget.characterRepository,
+      child: MaterialApp(
+        title: 'Riniel Chat',
+        themeMode: themeMode,
+        theme: ThemeData.from(colorScheme: ColorScheme.light()),
+        darkTheme: ThemeData.from(colorScheme: ColorScheme.dark()),
+        routes: {'/': (context) => HomeScreen()},
+      ),
     );
   }
 }

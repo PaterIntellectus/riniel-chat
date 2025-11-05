@@ -1,15 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:riniel_chat/presentation/constants.dart';
-import 'package:riniel_chat/domain/chat.dart';
-import 'package:riniel_chat/domain/message.dart';
-import 'package:riniel_chat/presentation/widgets/chat_footer.dart';
-import 'package:riniel_chat/presentation/widgets/message_bubble.dart';
-import 'package:riniel_chat/presentation/widgets/user_name.dart';
-import 'package:riniel_chat/presentation/widgets/color_picker_dialog.dart';
-import 'package:riniel_chat/presentation/widgets/user_avatar.dart';
+import 'package:riniel_chat/domain/chat/model/chat.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({

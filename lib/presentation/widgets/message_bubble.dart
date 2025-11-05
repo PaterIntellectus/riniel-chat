@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:riniel_chat/presentation/constants.dart';
-import 'package:riniel_chat/domain/message.dart';
+import 'package:riniel_chat/shared/message.dart';
+import 'package:riniel_chat/shared/ui/constants.dart';
 
 class MessageBubble extends StatelessWidget {
   final Message message;

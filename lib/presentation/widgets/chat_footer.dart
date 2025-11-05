@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:riniel_chat/presentation/widgets/message_input.dart';
 
 class ChatFooter extends StatefulWidget {
@@ -67,15 +66,15 @@ class _ChatFooterState extends State<ChatFooter> {
           IconButton(
             onLongPress: () => setState(() => _attachment = null),
             onPressed: () async {
-              final image = await ImagePicker().pickImage(
-                source: ImageSource.gallery,
-              );
+              // final image = await ImagePicker().pickImage(
+              //   source: ImageSource.gallery,
+              // );
 
-              if (image == null || image.path.isEmpty) {
-                return;
-              }
+              // if (image == null || image.path.isEmpty) {
+              //   return;
+              // }
 
-              setState(() => _attachment = File(image.path));
+              // setState(() => _attachment = File(image.path));
             },
             icon: Icon(
               Icons.attach_file,

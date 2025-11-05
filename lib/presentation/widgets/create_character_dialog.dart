@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:riniel_chat/domain/character.dart';
-import 'package:riniel_chat/presentation/constants.dart';
+import 'package:riniel_chat/domain/character/model/character.dart';
+import 'package:riniel_chat/shared/ui/constants.dart';
 
 class CharacterEditorDialog extends StatefulWidget {
   const CharacterEditorDialog({
@@ -98,9 +98,9 @@ class _CharacterEditorDialogState extends State<CharacterEditorDialog> {
         id: widget.character!.id,
         name: name,
         avatar: avatar,
+        note: '',
         createdAt: widget.character!.createdAt,
         updatedAt: widget.character!.updatedAt,
-        deletedAt: widget.character!.deletedAt,
       );
     }
 
