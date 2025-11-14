@@ -1,22 +1,20 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:rxdart/subjects.dart';
 
 class InMemoryStorage<K, V> {
-  InMemoryStorage([Map<K, V>? initial])
-    : _data = initial ?? {},
-      subject = initial == null
-          ? BehaviorSubject()
-          : BehaviorSubject.seeded(initial.values.toList());
+  InMemoryStorage({required this.indexator, Map<K, V> initial = const {}})
+    : _subject = .seeded(UnmodifiableMapView(initial));
 
-  BehaviorSubject<Iterable<V>> subject;
-
-  Stream<Iterable<V>> watch() => subject.asBroadcastStream();
-
-  V? find(K key) => _data[key];
+  Stream<Iterable<V>> watch({bool Function(V value)? filter}) {
+    return _subject
+        .map((data) => filter != null ? data.values.where(filter) : data.values)
+        .asBroadcastStream();
+  }
 
   List<V> list({int offset = 0, int? limit, bool Function(V value)? filter}) {
-    var values = _data.values;
+    var values = _modifiableData.values;
 
     if (filter != null) {
       values = values.where(filter);
@@ -39,27 +37,38 @@ class InMemoryStorage<K, V> {
     return values.toList();
   }
 
-  void save(K key, V value) {
-    _data[key] = value;
+  V? find(K key) => _modifiableData[key];
 
-    subject.add(_data.values);
+  void save(V value) {
+    final data = _modifiableData;
+
+    data[indexator(value)] = value;
+
+    _subject.add(UnmodifiableMapView(data));
   }
 
-  void saveMany(K Function(V value) key, Iterable<V> values) {
+  void saveMany(Iterable<V> values) {
+    final data = _modifiableData;
+
     for (final value in values) {
-      _data[key(value)] = value;
+      data[indexator(value)] = value;
     }
 
-    subject.add(_data.values);
+    _subject.add(UnmodifiableMapView(data));
   }
 
   void remove(K key) {
-    _data.remove(key);
+    final data = _modifiableData;
 
-    subject.add(_data.values);
+    data.remove(key);
+
+    _subject.add(UnmodifiableMapView(data));
   }
 
-  final Map<K, V> _data;
+  final BehaviorSubject<UnmodifiableMapView<K, V>> _subject;
+  final K Function(V value) indexator;
 
-  int get total => _data.length;
+  Map<K, V> get _modifiableData => {...?_subject.valueOrNull};
+
+  int get total => _subject.value.length;
 }
