@@ -1,42 +1,44 @@
-import 'package:riniel_chat/entities/chat/model/chat.dart';
-import 'package:riniel_chat/entities/message/model/message.dart';
-import 'package:riniel_chat/shared/model/bloc/list.dart';
-import 'package:riniel_chat/shared/model/bloc/ui_event_mixin.dart';
+// import 'dart:collection';
 
-part 'event.dart';
-part 'state.dart';
+// import 'package:bloc/bloc.dart';
+// import 'package:equatable/equatable.dart';
+// import 'package:riniel_chat/entities/chat/model/chat.dart';
+// import 'package:riniel_chat/entities/message/model/message.dart';
 
-class MessageListBloc
-    extends ListBloc<MessageListEvent, MessageListState, UiEvent>
-    with BlocUiEventMixin<MessageListState, UiEvent> {
-  MessageListBloc(this.messageRepository) : super(MessageListInitial()) {
-    // on<MessageListSubscriptionRequested>(_subscribe);
-  }
+// part 'event.dart';
+// part 'state.dart';
 
-  // void _subscribe(
-  //   MessageListSubscriptionRequested event,
-  //   Emitter<MessageListState> emit,
-  // ) async {
-  //   emit(state.asLoading());
+// class MessageListBloc extends Bloc<MessageListEvent, MessageListState> {
+//   MessageListBloc(this.messageRepository) : super(MessageListInitial()) {
+//     on<MessageListSubscriptionRequested>(_subscribe);
+//   }
 
-  //   await emit.forEach(
-  //     messageRepository.watch(chatId: event.chatId),
-  //     onData: (data) => state.asSuccess(data),
-  //     onError: (error, stackTrace) =>
-  //         state.asFailure(message: error.toString()),
-  //   );
-  // }
+//   void _subscribe(
+//     MessageListSubscriptionRequested event,
+//     Emitter<MessageListState> emit,
+//   ) async {
+//     emit(const .new(messages: []));
 
-  // void _sendMessage(
-  //   MessageListMessageSent event,
-  //   Emitter<MessageListState> emit,
-  // ) async {
-  //   try {
-  //     await messageRepository.save(event.message);
-  //   } catch (error) {
-  //     state.asFailure(message: error.toString());
-  //   }
-  // }
+//     await emit.forEach(
+//       messageRepository.watch(chatId: event.chatId),
+//       onData: (data) => .new(messages: data),
+//       onError: (error, stackTrace) => MessageListFailure(
+//         message: error.toString(),
+//         messages: state._messages,
+//       ),
+//     );
+//   }
 
-  final MessageRepository messageRepository;
-}
+//   // void _sendMessage(
+//   //   MessageListMessageSent event,
+//   //   Emitter<MessageListState> emit,
+//   // ) async {
+//   //   try {
+//   //     await messageRepository.save(event.message);
+//   //   } catch (error) {
+//   //     state.asFailure(message: error.toString());
+//   //   }
+//   // }
+
+//   final MessageRepository messageRepository;
+// }

@@ -1,37 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:riniel_chat/entities/character/model/character.dart';
 import 'package:riniel_chat/entities/character/ui/avatar.dart';
 import 'package:riniel_chat/entities/chat/model/chat.dart';
+import 'package:riniel_chat/entities/message/model/message.dart';
 import 'package:riniel_chat/entities/message/ui/bubble.dart';
-import 'package:riniel_chat/features/message/list/bloc/bloc.dart';
-import 'package:riniel_chat/features/message/list/ui/provider.dart';
-import 'package:riniel_chat/screens/chat/ui/footer.dart';
+import 'package:riniel_chat/screens/chat/ui/bloc/bloc.dart';
+import 'package:riniel_chat/screens/chat/ui/message_composer/bloc/bloc.dart';
+import 'package:riniel_chat/screens/chat/ui/message_composer/message_composer.dart';
 import 'package:riniel_chat/shared/ui/constants.dart';
 
 class ChatScreen extends StatelessWidget {
-  const ChatScreen({super.key, required this.chat});
+  const ChatScreen({super.key, required this.chatId});
 
-  final Chat chat;
+  final ChatId chatId;
 
   @override
   Widget build(BuildContext context) {
-    final character = chat.participants.singleOrNull;
+    final chatRepository = context.watch<ChatRepository>();
+    final characterRepository = context.watch<CharacterRepository>();
+    final messageRepository = context.watch<MessageRepository>();
 
-    return MessageListProvider(
-      onCreate: (bloc) => bloc.add(MessageListSubscriptionRequested(chat.id)),
+    return BlocProvider<ChatBloc>(
+      create: (context) => .new(
+        chatRepository: chatRepository,
+        characterRepository: characterRepository,
+        messageRepository: messageRepository,
+      )..add(ChatStarted(chatId)),
       child: Scaffold(
         appBar: AppBar(
           leading: BackButton(),
-          title: Row(
-            spacing: 8,
-            children: [
-              CharacterAvatar(
-                avatarUri: chat.participants.singleOrNull?.avatarUri,
-                name: chat.participants.singleOrNull?.name ?? '*',
-              ),
+          title: BlocBuilder<ChatBloc, ChatState>(
+            builder: (context, state) {
+              return Row(
+                spacing: Sizes.s,
+                children: [
+                  CharacterAvatar(
+                    onTap: () =>
+                        context.read<ChatBloc>().add(ChatActorSwitched()),
+                    avatarUri: state.character.value?.avatarUri,
+                    name: state.actor.isUser
+                        ? state.character.value?.name
+                        : '*',
+                  ),
 
-              Text(character?.name ?? 'Группа'),
-            ],
+                  Text(
+                    state.actor.isUser
+                        ? state.character.value?.name ?? ''
+                        : 'Пользователь',
+                  ),
+                ],
+              );
+            },
           ),
         ),
 
@@ -39,182 +59,67 @@ class ChatScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Expanded(
-              child: BlocBuilder<MessageListBloc, MessageListState>(
-                builder: (context, state) {
+              child: StreamBuilder(
+                stream: messageRepository.watch(chatId: chatId),
+                builder: (context, asyncSnapshot) {
+                  if (asyncSnapshot.hasError) {
+                    return Center(child: Text(asyncSnapshot.error.toString()));
+                  }
+
                   return ListView.separated(
                     reverse: true,
                     separatorBuilder: (context, index) =>
                         SizedBox(height: Sizes.xs),
                     itemBuilder: (context, index) {
-                      final message = state.list.elementAt(index);
+                      final message = asyncSnapshot.data!.elementAt(index);
 
-                      return MessageBubble(
-                        textDirection: message.authorId == character?.id
-                            ? .ltr
-                            : .rtl,
-                        message: message,
+                      return BlocBuilder<ChatBloc, ChatState>(
+                        buildWhen: (previous, current) =>
+                            previous.character != current.character,
+                        builder: (context, state) {
+                          return MessageBubble(
+                            textDirection:
+                                message.authorId == state.character.value?.id
+                                ? .rtl
+                                : .ltr,
+                            message: message,
+                          );
+                        },
                       );
                     },
-                    itemCount: state.list.length,
+                    itemCount: asyncSnapshot.data?.length ?? 0,
                   );
                 },
               ),
             ),
 
-            ChatFooter(
-              onSubmited: (text, attachment) {
-                final attachmentUri = attachment == null
-                    ? null
-                    : Uri.tryParse(attachment.path);
+            BlocBuilder<ChatBloc, ChatState>(
+              builder: (context, state) {
+                return BlocProvider<MessageComposerBloc>(
+                  create: (context) => .new(),
+                  child: MessageComposer(
+                    onSubmit: (value) {
+                      print('qwer:author: ${state.messageAuthor?.id}');
+                      print('qwer:actor: ${state.actor}');
 
-                // repo.save(
-                //   .create(
-                //     chatId: .new('1'),
-                //     authorId: .new('me'),
-                //     text: text,
-                //     attachmentUri: attachmentUri,
-                //   ),
-                // );
+                      context.read<ChatBloc>().add(
+                        ChatMessageSubmitted(
+                          .create(
+                            chatId: chatId,
+                            authorId: state.messageAuthor?.id,
+                            text: value.text,
+                            attachmentUri: value.attachment,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
               },
             ),
           ],
         ),
-        // body: Column(
-        //   children: [
-        //     Expanded(
-        //       child: GestureDetector(
-        //         child: ListView.separated(
-        //           padding: EdgeInsets.symmetric(vertical: Sizes.xs),
-        //           reverse: true,
-        //           itemCount: messages.length,
-        //           separatorBuilder: (context, index) =>
-        //               SizedBox(height: Sizes.xs),
-        //           itemBuilder: (context, index) {
-        //             final message = messages.elementAt(index);
-
-        //             return MessageBubble(
-        //               textDirection: message.authorId == _chat.sender.id
-        //                   ? TextDirection.rtl
-        //                   : TextDirection.ltr,
-        //               message: message,
-        //               onLongPress: _deleteMessage,
-        //             );
-        //           },
-        //         ),
-        //       ),
-        //     ),
-
-        //     Container(
-        //       decoration: BoxDecoration(
-        //         color: theme.colorScheme.surface,
-        //         boxShadow: [BoxShadow(color: Colors.grey[300]!, blurRadius: 2)],
-        //       ),
-
-        //       child: ChatFooter(
-        //         padding: EdgeInsets.symmetric(horizontal: Sizes.s),
-        //         onMessageSubmited: (String text, File? attachment) =>
-        //             _sendMessage(text: text, attachment: attachment),
-        //       ),
-        //     ),
-        //   ],
-        // ),
       ),
     );
-
-    // return Theme(
-    //   data: theme,
-    //   child: Scaffold(
-    //     appBar: AppBar(
-    //       backgroundColor: theme.primaryColor,
-    //       leading: BackButton(onPressed: _toggleUser),
-    //       title: Row(
-    //         spacing: 8,
-    //         children: [
-    //           UserAvatar(user: _chat.receiver, onTap: _setUserAvatar),
-
-    //           Expanded(
-    //             child: UserName(
-    //               key: ValueKey(_chat.receiver.id),
-    //               name: _chat.receiver.name,
-    //               onSubmitted: _setUserName,
-    //             ),
-    //           ),
-    //         ],
-    //       ),
-    //       actions: [
-    //         Builder(
-    //           builder: (context) {
-    //             return IconButton(
-    //               icon: Icon(
-    //                 Icons.more_vert,
-    //                 color: Theme.of(context).colorScheme.onPrimary,
-    //               ),
-    //               onPressed: () => showDialog(
-    //                 context: context,
-    //                 builder: (context) => ColorPickerDialog(
-    //                   activeThemeMode: widget.activeThemeMode,
-    //                   color: _chat.themeColor,
-    //                   onColorChanged: (value) =>
-    //                       setState(() => _chat = _chat.updateThemeColor(value)),
-    //                   onThemeModeChanged: widget.onThemeModeChanged,
-    //                 ),
-    //               ),
-    //             );
-    //           },
-    //         ),
-    //       ],
-    //     ),
-    //     body: Column(
-    //       children: [
-    //         Expanded(
-    //           child: GestureDetector(
-    //             onLongPress: _setBackgroundImage,
-    //             child: DecoratedBox(
-    //               decoration: BoxDecoration(
-    //                 image: _chat.backgroundImage == null
-    //                     ? null
-    //                     : DecorationImage(
-    //                         image: FileImage(_chat.backgroundImage!),
-    //                         fit: BoxFit.cover,
-    //                       ),
-    //               ),
-    //               child: ListView.separated(
-    //                 padding: EdgeInsets.symmetric(vertical: Sizes.xs),
-    //                 reverse: true,
-    //                 itemCount: messages.length,
-    //                 separatorBuilder: (context, index) =>
-    //                     SizedBox(height: Sizes.xs),
-    //                 itemBuilder: (context, index) {
-    //                   final message = messages.elementAt(index);
-
-    //                   return MessageBubble(
-    //                     textDirection: message.authorId == _chat.sender.id
-    //                         ? TextDirection.rtl
-    //                         : TextDirection.ltr,
-    //                     message: message,
-    //                     onLongPress: _deleteMessage,
-    //                   );
-    //                 },
-    //               ),
-    //             ),
-    //           ),
-    //         ),
-
-    //         Container(
-    //           decoration: BoxDecoration(
-    //             color: theme.colorScheme.surface,
-    //             boxShadow: [BoxShadow(color: Colors.grey[300]!, blurRadius: 2)],
-    //           ),
-
-    //           child: ChatFooter(
-    //             padding: EdgeInsets.symmetric(horizontal: Sizes.s),
-    //             onMessageSubmited: (String text, File? attachment) =>
-    //                 _sendMessage(text: text, attachment: attachment),
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 }

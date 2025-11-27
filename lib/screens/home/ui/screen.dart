@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:riniel_chat/screens/home/ui/characters_tab/bloc/bloc.dart';
+import 'package:riniel_chat/features/character/list/bloc/bloc.dart';
 import 'package:riniel_chat/screens/home/ui/characters_tab/tab.dart';
 import 'package:riniel_chat/screens/home/ui/chats_tab/bloc/bloc.dart';
 import 'package:riniel_chat/screens/home/ui/chats_tab/tab.dart';
@@ -24,15 +24,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       title: 'Чаты',
       widget: BlocProvider(
         create: (context) {
-          final bloc = ChatsTabBloc(context.read());
+          final bloc = ChatsTabBloc(
+            context.read(),
+            context.read(),
+            context.read(),
+          );
           bloc.add(ChatsTabStarted());
           return bloc;
         },
-        child: Builder(
-          builder: (context) {
-            return ChatsTab(bloc: context.read());
-          },
-        ),
+        child: Builder(builder: (context) => ChatsTab(bloc: context.read())),
       ),
       navBarItem: BottomNavigationBarItem(
         icon: Icon(Icons.chat),
@@ -44,14 +44,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       title: 'Персонажи',
       widget: BlocProvider(
         create: (context) {
-          final bloc = CharactersTabBloc(context.read());
-          bloc.add(CharactersTabStarted());
+          final bloc = CharacterListBloc(context.read());
+          bloc.add(CharacterListStarted());
           return bloc;
         },
         child: Builder(
-          builder: (context) {
-            return CharactersTab(bloc: context.read());
-          },
+          builder: (context) => CharactersTab(bloc: context.read()),
         ),
       ),
       navBarItem: BottomNavigationBarItem(

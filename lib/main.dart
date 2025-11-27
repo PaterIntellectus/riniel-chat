@@ -52,21 +52,17 @@ void main() {
     ),
   ]);
 
-  final memoryChatStorage = InMemoryStorage<ChatId, ChatMemoryStorageDto>(
+  final memoryChatStorage = InMemoryStorage<ChatId, Chat>(
     indexator: (value) => value.id,
   );
 
   runApp(
     App(
-      characterRepository: MemoryCharacterRepository(
+      characterRepository: InMemoryCharacterRepository(
         memoryStorage: characterMemoryStore,
       ),
-      messageRepository: MemoryMessageRepository(messageMemoryStore),
-      chatRepository: InMemoryChatRepository(
-        characterStorage: characterMemoryStore,
-        messageStorage: messageMemoryStore,
-        chatStorage: memoryChatStorage,
-      ),
+      messageRepository: InMemoryMessageRepository(messageMemoryStore),
+      chatRepository: InMemoryChatRepository(chatStorage: memoryChatStorage),
     ),
   );
 }
@@ -77,14 +73,14 @@ class SimpleBlocObserver extends BlocObserver {
     Bloc<dynamic, dynamic> bloc,
     Transition<dynamic, dynamic> transition,
   ) {
-    print('Bloc: ${bloc.runtimeType} transition: $transition');
+    debugPrint('Bloc: ${bloc.runtimeType} transition: $transition');
 
     super.onTransition(bloc, transition);
   }
 
   @override
   void onEvent(Bloc<dynamic, dynamic> bloc, Object? event) {
-    print('Bloc: ${bloc.runtimeType} event: $event');
+    debugPrint('Bloc: ${bloc.runtimeType} event: $event');
 
     super.onEvent(bloc, event);
   }

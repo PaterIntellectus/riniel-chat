@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:riniel_chat/entities/character/model/character.dart';
 import 'package:riniel_chat/entities/character/ui/avatar.dart';
 import 'package:riniel_chat/shared/ui/constants.dart';
-import 'package:riniel_chat/shared/ui/file_picker_controller.dart';
+import 'package:riniel_chat/shared/ui/file_controller.dart';
 import 'package:riniel_chat/shared/ui/riniel_dialog.dart';
 import 'package:riniel_chat/shared/ui/style.dart';
 
@@ -54,40 +54,33 @@ class _EditCharacterDialogState extends State<EditCharacterDialog> {
       header: Text(title, style: theme.textTheme.titleMedium),
       body: Form(
         key: _formKey,
-        canPop: false,
+        // canPop: false,
         child: Padding(
           padding: const .symmetric(horizontal: Sizes.s),
           child: Column(
+            mainAxisSize: .min,
             spacing: Sizes.s,
             children: [
               Row(
                 spacing: Sizes.s,
                 children: [
-                  GestureDetector(
-                    onLongPress: () => _avatarController.value = null,
-                    onTap: () async {
-                      final image = await ImagePicker().pickImage(
-                        source: .gallery,
-                      );
+                  ListenableBuilder(
+                    listenable: .merge([_avatarController, _nameController]),
+                    builder: (context, child) => CharacterAvatar(
+                      onLongPress: () => _avatarController.value = null,
+                      onTap: () async {
+                        final image = await ImagePicker().pickImage(
+                          source: .gallery,
+                        );
 
-                      if (image != null) {
-                        _avatarController.value = image;
-                      }
-                    },
-                    child: ValueListenableBuilder(
-                      valueListenable: _avatarController,
-                      builder: (context, avatar, child) =>
-                          ValueListenableBuilder(
-                            valueListenable: _nameController,
-                            builder: (context, nameValue, child) {
-                              return CharacterAvatar(
-                                avatarUri: avatar != null
-                                    ? .parse(avatar.path)
-                                    : null,
-                                name: nameValue.text,
-                              );
-                            },
-                          ),
+                        if (image != null) {
+                          _avatarController.value = image;
+                        }
+                      },
+                      avatarUri: _avatarController.value != null
+                          ? .parse(_avatarController.value!.path)
+                          : null,
+                      name: _nameController.value.text,
                     ),
                   ),
 
@@ -101,7 +94,7 @@ class _EditCharacterDialogState extends State<EditCharacterDialog> {
                           ? 'Персонажу необходимо имя'
                           : null,
                       onTapOutside: (event) => FocusScope.of(context).unfocus(),
-                      decoration: InputDecoration(hintText: 'Имя персонажа'),
+                      decoration: const .new(hintText: 'Имя персонажа'),
                     ),
                   ),
                 ],
@@ -112,7 +105,7 @@ class _EditCharacterDialogState extends State<EditCharacterDialog> {
                 textCapitalization: .sentences,
                 autovalidateMode: .onUserInteraction,
                 onTapOutside: (event) => FocusScope.of(context).unfocus(),
-                decoration: InputDecoration(
+                decoration: const .new(
                   hintText: 'Дополнительное описание',
                   border: .none,
                   fillColor: containerColor,
@@ -133,7 +126,7 @@ class _EditCharacterDialogState extends State<EditCharacterDialog> {
 
           FilledButton(
             onPressed: saveCharacter,
-            style: ButtonStyle(
+            style: const .new(
               backgroundColor: WidgetStatePropertyAll(successColor),
             ),
             child: Text('Сохранить'),

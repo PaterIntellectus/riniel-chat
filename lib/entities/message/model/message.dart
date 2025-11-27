@@ -28,6 +28,7 @@ class MessageAlreadyDeletedException implements Exception {
 
 abstract interface class MessageRepository {
   Stream<List<Message>> watch({required ChatId chatId});
+  FutureOr<List<Message>> list({required ChatId chatId});
   FutureOr<void> save(Message message);
   FutureOr<void> remove(MessageId id);
 }
@@ -56,10 +57,6 @@ class Message with EquatableMixin {
     required this.updatedAt,
     required this.deletedAt,
   }) {
-    if (authorId.value.isEmpty) {
-      throw MessageAuthorNotProvided();
-    }
-
     if (text.isEmpty && attachmentUri == null) {
       throw EmptyMessageContentException();
     }
@@ -67,7 +64,7 @@ class Message with EquatableMixin {
 
   Message.create({
     required ChatId chatId,
-    required CharacterId authorId,
+    required CharacterId? authorId,
     required String text,
     required Uri? attachmentUri,
   }) : this._valid(
@@ -83,7 +80,7 @@ class Message with EquatableMixin {
 
   final MessageId id;
   final ChatId chatId;
-  final CharacterId authorId;
+  final CharacterId? authorId;
   final String text;
   final Uri? attachmentUri;
   final DateTime createdAt;

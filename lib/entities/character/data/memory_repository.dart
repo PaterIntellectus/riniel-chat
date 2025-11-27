@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:riniel_chat/entities/character/model/character.dart';
 import 'package:riniel_chat/shared/data/memory/storage.dart';
 
-class MemoryCharacterRepository implements CharacterRepository {
-  const MemoryCharacterRepository({
+class InMemoryCharacterRepository implements CharacterRepository {
+  const InMemoryCharacterRepository({
     required InMemoryStorage<CharacterId, Character> memoryStorage,
   }) : _memoryStorage = memoryStorage;
 

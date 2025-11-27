@@ -1,24 +1,34 @@
-part of 'bloc.dart';
+// part of 'bloc.dart';
 
-typedef MessageListState = ListState<Message>;
+// class MessageListState with EquatableMixin {
+//   const MessageListState({required List<Message> messages})
+//     : _messages = messages;
 
-final class MessageListInitial extends MessageListState {
-  const MessageListInitial() : super(list: const []);
-}
+//   final List<Message> _messages;
 
-final class MessageListProcessing extends MessageListState {
-  const MessageListProcessing({required super.list});
-}
+//   @override
+//   List<Object?> get props => [_messages];
 
-final class MessageListSuccess extends MessageListState {
-  const MessageListSuccess({required super.list});
-}
+//   UnmodifiableListView<Message> get messages => .new(_messages);
+// }
 
-final class MessageListFailure extends MessageListState {
-  const MessageListFailure({required super.list, required this.message});
+// final class MessageListInitial extends MessageListState {
+//   const MessageListInitial() : super(messages: const []);
+// }
 
-  final String message;
+// final class MessageListProcessing extends MessageListState {
+//   const MessageListProcessing({required super.messages});
+// }
 
-  @override
-  List<Object?> get props => [...super.props, message];
-}
+// final class MessageListSuccess extends MessageListState {
+//   const MessageListSuccess({required super.messages});
+// }
+
+// final class MessageListFailure extends MessageListState {
+//   const MessageListFailure({required super.messages, required this.message});
+
+//   final String message;
+
+//   @override
+//   List<Object?> get props => [...super.props, messages, message];
+// }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:riniel_chat/entities/character/ui/avatar.dart';
-import 'package:riniel_chat/features/chat/settings/ui/chat_settings_dialog.dart';
+import 'package:riniel_chat/features/chat/create/ui/dialog.dart';
 import 'package:riniel_chat/screens/chat/ui/screen.dart';
 import 'package:riniel_chat/screens/home/ui/chats_tab/bloc/bloc.dart';
 import 'package:riniel_chat/shared/ui/constants.dart';
@@ -21,6 +21,7 @@ class _ChatsTabState extends State<ChatsTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
     return BlocBuilder<ChatsTabBloc, ChatsTabState>(
       bloc: widget.bloc,
       builder: (context, state) {
@@ -28,27 +29,21 @@ class _ChatsTabState extends State<ChatsTab>
           children: [
             Builder(
               builder: (context) {
-                if (state case ChatsTabProcessing()) {
-                  return Center(child: CircularProgressIndicator());
+                if (state.chats.isReloading) {
+                  return const Center(child: CircularProgressIndicator());
                 }
 
-                if (state case ChatsTabFailure()) {
-                  final message = state.message;
+                if (state.chats.hasError) {
+                  final message = state.chats.errorMessage;
 
                   return Center(child: Text(message.toString()));
                 }
 
-                final chats = state.list;
+                final chats = state.chats.requireValue;
 
                 if (chats.isEmpty) {
-                  return Center(
-                    child: Text(
-                      'Список чатов пуст, сначала создайте нового персонажа',
-                    ),
-                  );
+                  return const Center(child: Text('Список чатов пуст'));
                 }
-
-                final navigator = Navigator.of(context);
 
                 return RefreshIndicator(
                   onRefresh: () async => widget.bloc.add(ChatsTabStarted()),
@@ -61,38 +56,36 @@ class _ChatsTabState extends State<ChatsTab>
                     ),
 
                     itemBuilder: (context, index) {
-                      final chat = chats.elementAt(index);
-
-                      final character = chat.participants.singleOrNull;
-                      final lastMessage = chat.lastMessage;
-
-                      final trailingTime = lastMessage == null
-                          ? chat.createdAt
-                          : lastMessage.updatedAt;
+                      final ChatsTabChat(
+                        :chatId,
+                        chatAvatarUri: characterAvatarUri,
+                        chatName: name,
+                        :lastMessage,
+                      ) = chats.elementAt(
+                        index,
+                      );
 
                       return ListTile(
-                        onLongPress: () =>
-                            widget.bloc.add(ChatsTabChatRemoved(chat.id)),
-                        key: ValueKey(chat.id),
-                        onTap: () => navigator.push(
+                        key: ValueKey(chatId),
+                        onTap: () => Navigator.of(context).push(
                           MaterialPageRoute<void>(
-                            builder: (context) => ChatScreen(chat: chat),
+                            builder: (context) => ChatScreen(chatId: chatId),
                           ),
                         ),
                         leading: CharacterAvatar(
-                          avatarUri: character?.avatarUri,
-                          name: character?.name ?? '*',
+                          avatarUri: characterAvatarUri,
+                          name: name.value,
                         ),
-                        title: Text(character?.name ?? 'Группа'),
+                        title: Text(name.value),
                         subtitle: lastMessage != null
                             ? Text(lastMessage.text)
                             : null,
-                        trailing: Text(
-                          '${trailingTime.hour}:${trailingTime.minute}',
-                        ),
+                        trailing: lastMessage != null
+                            ? Text(lastMessage.createdAt)
+                            : null,
                       );
                     },
-                    itemCount: state.list.length,
+                    itemCount: chats.length,
                   ),
                 );
               },
@@ -106,17 +99,8 @@ class _ChatsTabState extends State<ChatsTab>
                 onPressed: () {
                   showDialog(
                     context: context,
-                    builder: (context) => ChatSettingsDialog(),
+                    builder: (context) => CreateChatDialog(),
                   );
-
-                  // widget.bloc.add(
-                  //   ChatsTabChatCreated(
-                  //     .create(
-                  //       id: .new(Random().nextInt(1000).toString()),
-                  //       participants: [],
-                  //     ),
-                  //   ),
-                  // );
                 },
               ),
             ),

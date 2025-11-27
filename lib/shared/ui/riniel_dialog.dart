@@ -2,6 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:riniel_chat/shared/ui/constants.dart';
 import 'package:riniel_chat/shared/ui/style.dart';
 
+class RinielDialog extends StatelessWidget {
+  const RinielDialog({super.key, this.header, this.body, this.footer});
+
+  final Widget? header;
+  final Widget? body;
+  final Widget? footer;
+
+  static const defaultPadding = EdgeInsets.symmetric(
+    horizontal: Sizes.s * 1.25,
+    vertical: Sizes.s,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final hasHeader = header != null;
+    final hasBody = body != null;
+    final hasFooter = footer != null;
+
+    return Dialog(
+      clipBehavior: .antiAlias,
+      child: Column(
+        mainAxisAlignment: .center,
+        crossAxisAlignment: .start,
+        mainAxisSize: .min,
+        children: [
+          if (hasHeader) RinielDialogHeader(child: header!),
+
+          if (hasBody) Flexible(child: body!),
+
+          if (hasFooter) RinielDialogFooter(child: footer!),
+        ],
+      ),
+    );
+  }
+}
+
 class RinielDialogHeader extends StatelessWidget {
   const RinielDialogHeader({
     super.key,
@@ -31,51 +67,16 @@ class RinielDialogHeader extends StatelessWidget {
   }
 }
 
-class RinielDialog extends StatelessWidget {
-  const RinielDialog({super.key, this.header, this.body, this.footer});
+class RinielDialogFooter extends StatelessWidget {
+  const RinielDialogFooter({super.key, required this.child});
 
-  final Widget? header;
-  final Widget? body;
-  final Widget? footer;
-
-  static const defaultPadding = EdgeInsets.symmetric(
-    horizontal: Sizes.s * 1.25,
-    vertical: Sizes.s,
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    final hasHeader = header != null;
-    final hasFooter = footer != null;
-
-    return Dialog(
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        mainAxisAlignment: .center,
-        crossAxisAlignment: .start,
-        mainAxisSize: .min,
-        children: [
-          if (hasHeader) RinielDialogHeader(child: header!),
-
-          if (body != null) Flexible(child: SingleChildScrollView(child: body)),
-
-          if (hasFooter) AppDialogFooter(child: footer),
-        ],
-      ),
-    );
-  }
-}
-
-class AppDialogFooter extends StatelessWidget {
-  const AppDialogFooter({super.key, required this.child});
-
-  final Widget? child;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const .symmetric(horizontal: Sizes.s, vertical: Sizes.s * 0.75),
-      child: child!,
+      child: child,
     );
   }
 }

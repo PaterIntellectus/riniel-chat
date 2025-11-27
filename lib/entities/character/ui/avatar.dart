@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:riniel_chat/shared/ui/style.dart';
 
 class CharacterAvatar extends StatelessWidget {
   const CharacterAvatar({
@@ -11,7 +12,7 @@ class CharacterAvatar extends StatelessWidget {
   });
 
   final Uri? avatarUri;
-  final String name;
+  final String? name;
   final double size;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
@@ -19,37 +20,39 @@ class CharacterAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final nameInitialLetter = name.isEmpty ? '@' : name[0].toUpperCase();
 
     return ClipOval(
       child: SizedBox(
         width: size,
         height: size,
         child: Material(
-          color: Colors.green,
+          color: successColor,
           child: InkWell(
             onTap: onTap,
             onLongPress: onLongPress,
             child: Stack(
               children: [
-                Positioned.fill(
-                  child: Center(
-                    child: Text(
-                      nameInitialLetter,
-                      textAlign: .center,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: Colors.white,
+                if (name != null && name!.isNotEmpty)
+                  Positioned.fill(
+                    child: Center(
+                      child: Text(
+                        name![0].toUpperCase(),
+                        textAlign: .center,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
-                ),
 
                 if (avatarUri != null)
-                  Image.file(
-                    .fromUri(avatarUri!),
-                    fit: .cover,
-                    width: size,
-                    height: size,
+                  Positioned.fill(
+                    child: Image.file(
+                      .fromUri(avatarUri!),
+                      fit: .cover,
+                      width: size,
+                      height: size,
+                    ),
                   ),
               ],
             ),

@@ -12,6 +12,7 @@ class CharacterInfoDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final hasNote = character.note.isNotEmpty;
 
     return RinielDialog(
       header: Row(
@@ -22,12 +23,30 @@ class CharacterInfoDialog extends StatelessWidget {
           Text(character.name),
         ],
       ),
-      body: character.note.isEmpty
-          ? null
-          : Padding(
-              padding: .all(Sizes.m),
-              child: Text(character.note, style: theme.textTheme.bodyMedium),
+      body: Padding(
+        padding: .all(Sizes.m),
+        child: Column(
+          mainAxisAlignment: .center,
+          crossAxisAlignment: .start,
+          mainAxisSize: .min,
+          children: [
+            if (hasNote) ...[
+              Text(character.note, style: theme.textTheme.bodyMedium),
+              SizedBox(height: Sizes.s),
+            ],
+
+            Text(
+              'Создан: ${character.createdAt}',
+              style: theme.textTheme.labelLarge,
             ),
+
+            Text(
+              'Изменён: ${character.updatedAt}',
+              style: theme.textTheme.labelLarge,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

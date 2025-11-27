@@ -1,11 +1,14 @@
-part of 'bloc.dart';
+// part of 'bloc.dart';
 
-sealed class MessageListEvent extends ListEvent {
-  const MessageListEvent();
-}
+// sealed class MessageListEvent with EquatableMixin {
+//   const MessageListEvent();
 
-final class MessageListSubscriptionRequested extends MessageListEvent {
-  const MessageListSubscriptionRequested(this.chatId);
+//   @override
+//   List<Object?> get props => const [];
+// }
 
-  final ChatId chatId;
-}
+// final class MessageListSubscriptionRequested extends MessageListEvent {
+//   const MessageListSubscriptionRequested(this.chatId);
+
+//   final ChatId chatId;
+// }

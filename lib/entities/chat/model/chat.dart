@@ -1,17 +1,30 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/rendering.dart';
 import 'package:riniel_chat/entities/character/model/character.dart';
-import 'package:riniel_chat/entities/message/model/message.dart';
+import 'package:uuid/uuid.dart';
 
 extension type ChatId(String value) {}
+
+class ChatName with EquatableMixin {
+  ChatName(String value) : value = value.trim() {
+    if (this.value.isEmpty) {
+      throw 'Название не может быть пустым';
+    }
+  }
+
+  final String value;
+
+  @override
+  List<Object?> get props => [value];
+}
 
 class Chat with EquatableMixin {
   const Chat.persisted({
     required this.id,
-    required this.participants,
-    this.lastMessage,
+    required this.characterId,
+    required this.name,
     required this.color,
     this.backgroundImageUri,
     required this.createdAt,
@@ -20,8 +33,8 @@ class Chat with EquatableMixin {
 
   const Chat._valid({
     required this.id,
-    required this.participants,
-    this.lastMessage,
+    required this.characterId,
+    required this.name,
     required this.color,
     this.backgroundImageUri,
     required this.createdAt,
@@ -29,15 +42,14 @@ class Chat with EquatableMixin {
   });
 
   factory Chat.create({
-    required final ChatId id,
-    required final List<Character> participants,
-    final Message? lastMessage,
+    required final CharacterId characterId,
+    required final ChatName name,
     final Color color = const .new(0xFFFFFFFF),
     final Uri? backgroundImageUri,
   }) => ._valid(
-    id: id,
-    participants: participants,
-    lastMessage: lastMessage,
+    id: .new(Uuid().v4()),
+    characterId: characterId,
+    name: name,
     color: color,
     backgroundImageUri: backgroundImageUri,
     createdAt: .now(),
@@ -45,8 +57,8 @@ class Chat with EquatableMixin {
   );
 
   final ChatId id;
-  final List<Character> participants;
-  final Message? lastMessage;
+  final CharacterId characterId;
+  final ChatName name;
   final Color color;
   final Uri? backgroundImageUri;
   final DateTime createdAt;
@@ -55,8 +67,10 @@ class Chat with EquatableMixin {
   @override
   List<Object?> get props => [
     id,
-    participants,
-    lastMessage,
+    characterId,
+    name,
+    color,
+    backgroundImageUri,
     createdAt,
     updatedAt,
   ];
@@ -64,7 +78,7 @@ class Chat with EquatableMixin {
 
 abstract interface class ChatRepository {
   Stream<List<Chat>> watch();
-  // FutureOr<Chat> find(ChatId id);
+  FutureOr<Chat?> find(ChatId id);
   FutureOr<void> save(Chat chat);
   FutureOr<void> remove(ChatId id);
 }
