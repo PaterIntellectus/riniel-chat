@@ -9,14 +9,18 @@ import 'package:riniel_chat/entities/message/data/memory_repository.dart';
 import 'package:riniel_chat/entities/message/model/message.dart';
 import 'package:riniel_chat/shared/data/memory/storage.dart';
 
-void main() {
+void main() async {
   Bloc.observer = SimpleBlocObserver();
 
   final characterMemoryStore = InMemoryStorage<CharacterId, Character>(
     indexator: (value) => value.id,
   );
+  final characterRepository = InMemoryCharacterRepository(
+    memoryStorage: characterMemoryStore,
+  );
 
   final firstCharacter = Character.create(
+    id: characterRepository.nextId(),
     name: 'Egirec',
     avatarUri: null,
     note: 'Nulla et aute officia exercitation sit.',
@@ -24,8 +28,13 @@ void main() {
 
   characterMemoryStore.saveMany([
     firstCharacter,
-    .create(name: 'Antonio Grazielle', avatarUri: null),
     .create(
+      id: characterRepository.nextId(),
+      name: 'Antonio Grazielle',
+      avatarUri: null,
+    ),
+    .create(
+      id: characterRepository.nextId(),
       name: 'Pussy Slayer',
       avatarUri: null,
       note:
@@ -58,9 +67,7 @@ void main() {
 
   runApp(
     App(
-      characterRepository: InMemoryCharacterRepository(
-        memoryStorage: characterMemoryStore,
-      ),
+      characterRepository: characterRepository,
       messageRepository: InMemoryMessageRepository(messageMemoryStore),
       chatRepository: InMemoryChatRepository(chatStorage: memoryChatStorage),
     ),

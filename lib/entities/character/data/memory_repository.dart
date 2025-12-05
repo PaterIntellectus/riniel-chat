@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:riniel_chat/entities/character/model/character.dart';
 import 'package:riniel_chat/shared/data/memory/storage.dart';
+import 'package:uuid/uuid.dart';
 
 class InMemoryCharacterRepository implements CharacterRepository {
   const InMemoryCharacterRepository({
@@ -23,6 +24,11 @@ class InMemoryCharacterRepository implements CharacterRepository {
 
   @override
   void remove(CharacterId id) => _memoryStorage.remove(id);
+
+  @override
+  CharacterId nextId() {
+    return CharacterId(Uuid().v4());
+  }
 
   final InMemoryStorage<CharacterId, Character> _memoryStorage;
 }

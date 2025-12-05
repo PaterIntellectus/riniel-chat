@@ -4,6 +4,7 @@ import 'package:riniel_chat/entities/character/model/character.dart';
 import 'package:riniel_chat/entities/character/ui/avatar.dart';
 import 'package:riniel_chat/entities/character/ui/info_dialog.dart';
 import 'package:riniel_chat/features/character/list/bloc/bloc.dart';
+import 'package:riniel_chat/screens/home/ui/characters_tab/edit_character/bloc/bloc.dart';
 import 'package:riniel_chat/screens/home/ui/characters_tab/edit_character/edit_character_dialog.dart';
 import 'package:riniel_chat/screens/home/ui/characters_tab/remove_character_dialog.dart';
 import 'package:riniel_chat/shared/lib/snackbar.dart';
@@ -101,17 +102,27 @@ class _CharactersTabState extends State<CharactersTab>
               Positioned(
                 bottom: Sizes.m,
                 right: Sizes.m,
-                child: FloatingActionButton(
-                  child: Icon(Icons.add),
-                  onPressed: () async {
-                    final character = await showDialog(
-                      context: context,
-                      builder: (context) => EditCharacterDialog(),
-                    );
+                child: Builder(
+                  builder: (context) {
+                    return FloatingActionButton(
+                      child: Icon(Icons.add),
+                      onPressed: () async {
+                        final character = await showDialog(
+                          context: context,
+                          builder: (context) => BlocProvider(
+                            create: (context) =>
+                                EditCharacterBloc(context.read()),
+                            child: EditCharacterDialog(),
+                          ),
+                        );
 
-                    if (character is Character) {
-                      widget.bloc.add(CharacterListCharacterEdited(character));
-                    }
+                        if (character is Character) {
+                          widget.bloc.add(
+                            CharacterListCharacterEdited(character),
+                          );
+                        }
+                      },
+                    );
                   },
                 ),
               ),

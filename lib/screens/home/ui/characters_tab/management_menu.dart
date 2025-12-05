@@ -30,15 +30,15 @@ class _CharacterManagementMenuState extends State<CharacterManagementMenu> {
             trailingIcon: Icon(Icons.edit_outlined),
             child: Text('Редактировать'),
             onPressed: () async {
-              final updated = await showDialog(
-                context: context,
-                builder: (context) =>
-                    EditCharacterDialog(character: widget.character),
-              );
+              // final updated = await showDialog(
+              //   context: context,
+              //   builder: (context) =>
+              //       EditCharacterDialog(character: widget.character),
+              // );
 
-              if (updated is Character) {
-                widget.onEdited?.call(updated);
-              }
+              // if (updated is Character) {
+              //   widget.onEdited?.call(updated);
+              // }
             },
           ),
 

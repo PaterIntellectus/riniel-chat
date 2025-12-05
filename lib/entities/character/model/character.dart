@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
-import 'package:uuid/uuid.dart';
 
 abstract interface class CharacterRepository {
   Stream<List<Character>> watch();
@@ -9,6 +8,7 @@ abstract interface class CharacterRepository {
   FutureOr<Character?> find(CharacterId id);
   FutureOr<void> save(Character character);
   FutureOr<void> remove(CharacterId id);
+  FutureOr<CharacterId> nextId();
 }
 
 extension type CharacterId(String value) {}
@@ -28,11 +28,12 @@ class Character with EquatableMixin {
   }
 
   factory Character.create({
+    required CharacterId id,
     required final String name,
     final Uri? avatarUri,
     final String note = '',
   }) => ._valid(
-    id: CharacterId(Uuid().v4()),
+    id: id,
     name: name,
     note: note,
     avatarUri: avatarUri,
