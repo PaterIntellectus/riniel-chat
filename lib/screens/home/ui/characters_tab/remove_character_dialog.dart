@@ -19,15 +19,15 @@ class RemoveCharacterDialog extends StatelessWidget {
         children: [
           FilledButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text('Отмена'),
+            child: const Text('Отмена'),
           ),
 
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: ButtonStyle(
+            style: const ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(dangerColor),
             ),
-            child: Text('Подтвердить'),
+            child: const Text('Подтвердить'),
           ),
         ],
       ),

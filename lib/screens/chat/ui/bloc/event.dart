@@ -18,16 +18,29 @@ final class ChatStarted extends ChatEvent {
 
 final class ChatActorSwitched extends ChatEvent {
   const ChatActorSwitched();
+}
+
+final class ChatMessageTextChanged extends ChatEvent {
+  const ChatMessageTextChanged(this.text);
+
+  final String text;
 
   @override
-  List<Object?> get props => [...super.props];
+  List<Object?> get props => [...super.props, text];
+}
+
+final class ChatMessageAttachmentChanged extends ChatEvent {
+  const ChatMessageAttachmentChanged(this.file);
+
+  final XFile? file;
+
+  @override
+  List<Object?> get props => [...super.props, file];
 }
 
 final class ChatMessageSubmitted extends ChatEvent {
-  const ChatMessageSubmitted(this.message);
-
-  final Message message;
+  const ChatMessageSubmitted();
 
   @override
-  List<Object?> get props => [...super.props, message];
+  List<Object?> get props => [...super.props];
 }

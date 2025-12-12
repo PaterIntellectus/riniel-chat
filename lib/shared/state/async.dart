@@ -3,10 +3,8 @@ import 'package:equatable/equatable.dart';
 typedef _Loading = ({num? progress});
 typedef Error = ({Object? error, StackTrace stackTrace});
 
-sealed class AsyncValue<T> with EquatableMixin {
-  const AsyncValue({T? value}) : _value = value, _error = null, _loading = null;
-
-  const AsyncValue._raw({
+sealed class AsyncState<T> with EquatableMixin {
+  const AsyncState._({
     required T? value,
     required Error? error,
     required _Loading? loading,
@@ -14,30 +12,21 @@ sealed class AsyncValue<T> with EquatableMixin {
        _error = error,
        _loading = loading;
 
-  const factory AsyncValue.data(final T value) = AsyncData;
+  const factory AsyncState.data(final T value) = AsyncData;
 
-  const factory AsyncValue.error({
+  const factory AsyncState.error({
     final T? value,
     final Object? error,
     required final StackTrace stackTrace,
   }) = AsyncError;
 
-  const factory AsyncValue.loading({final T? value, final num? progress}) =
+  const factory AsyncState.loading({final T? value, final num? progress}) =
       AsyncLoading;
 
-  // эти методы кажутся сомнительными
-  // AsyncValue<T> toData(final T value) => .data(value);
+  AsyncState<T> cast(AsyncState<T> Function(AsyncState<T> state) caster) =>
+      caster(this);
 
-  // AsyncValue<T> toError({
-  //   final T? value,
-  //   final Object? error,
-  //   required final StackTrace stackTrace,
-  // }) => .error(value: value ?? _value, error: error, stackTrace: stackTrace);
-
-  // AsyncValue<T> toLoading({final T? value, final num? progress}) =>
-  //     .loading(value: value ?? _value, progress: progress);
-
-  AsyncValue<C> castValue<C>(C? Function(T? value) caster) => switch (this) {
+  AsyncState<C> castValue<C>(C? Function(T? value) caster) => switch (this) {
     AsyncData(:final value) => .data(caster(value) as C),
     AsyncError() => .error(
       value: caster(value),
@@ -50,7 +39,7 @@ sealed class AsyncValue<T> with EquatableMixin {
     ),
   };
 
-  static Future<AsyncValue<T>> guard<T>(Future<T> Function() future) async {
+  static Future<AsyncState<T>> guard<T>(Future<T> Function() future) async {
     try {
       return .data(await future());
     } catch (error, stackTrace) {
@@ -65,9 +54,9 @@ sealed class AsyncValue<T> with EquatableMixin {
   @override
   List<Object?> get props => [_value, _error, _loading];
 
-  bool get hasValue => _value != null;
   T? get value => _value;
   T get requireValue => value!;
+  bool get hasValue => _value != null;
 
   bool get isLoading => _loading != null;
   bool get isRefreshing => isLoading && value != null;
@@ -77,31 +66,34 @@ sealed class AsyncValue<T> with EquatableMixin {
   String? get errorMessage => _error?.error.toString();
 }
 
-final class AsyncData<T> extends AsyncValue<T> {
+final class AsyncData<T> extends AsyncState<T> {
   const AsyncData(final T value)
-    : super._raw(value: value, error: null, loading: null);
+    : super._(value: value, error: null, loading: null);
 
   @override
   T get value => super.value!;
 }
 
-final class AsyncError<T> extends AsyncValue<T> {
+final class AsyncError<T> extends AsyncState<T> {
   const AsyncError({
     super.value,
     final Object? error,
     required final StackTrace stackTrace,
-  }) : super._raw(loading: null, error: (error: error, stackTrace: stackTrace));
+  }) : super._(loading: null, error: (error: error, stackTrace: stackTrace));
 
   @override
   Error get _error => super._error!;
 
   @override
+  String get errorMessage => _error.error.toString();
+
+  @override
   bool get hasError => true;
 }
 
-final class AsyncLoading<T> extends AsyncValue<T> {
+final class AsyncLoading<T> extends AsyncState<T> {
   const AsyncLoading({super.value, final num? progress})
-    : super._raw(loading: (progress: progress), error: null);
+    : super._(loading: (progress: progress), error: null);
 
   @override
   _Loading get _loading => (progress: super._loading?.progress);

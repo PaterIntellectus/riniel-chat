@@ -44,7 +44,7 @@ class App extends StatelessWidget {
         ],
         child: child!,
       ),
-      home: HomeScreen(),
+      home: const HomeScreen(),
     );
   }
 }

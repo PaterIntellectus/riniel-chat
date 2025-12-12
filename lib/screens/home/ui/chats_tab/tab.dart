@@ -46,9 +46,10 @@ class _ChatsTabState extends State<ChatsTab>
                 }
 
                 return RefreshIndicator(
-                  onRefresh: () async => widget.bloc.add(ChatsTabStarted()),
+                  onRefresh: () async =>
+                      widget.bloc.add(const ChatsTabStarted()),
                   child: ListView.separated(
-                    separatorBuilder: (context, index) => Divider(
+                    separatorBuilder: (context, index) => const Divider(
                       indent: Sizes.s,
                       endIndent: Sizes.s,
                       height: 1,
@@ -95,11 +96,11 @@ class _ChatsTabState extends State<ChatsTab>
               bottom: Sizes.m,
               right: Sizes.m,
               child: FloatingActionButton(
-                child: Icon(Icons.add),
+                child: const Icon(Icons.add),
                 onPressed: () {
                   showDialog(
                     context: context,
-                    builder: (context) => CreateChatDialog(),
+                    builder: (context) => const CreateChatDialog(),
                   );
                 },
               ),

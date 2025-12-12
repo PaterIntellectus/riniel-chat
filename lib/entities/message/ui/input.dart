@@ -14,7 +14,7 @@ class MessageInput extends StatelessWidget {
       minLines: 1,
       maxLines: 5,
       keyboardType: .multiline,
-      decoration: InputDecoration(hintText: "Сообщение", border: .none),
+      decoration: const InputDecoration(hintText: "Сообщение", border: .none),
     );
   }
 }

@@ -6,8 +6,7 @@ import 'package:riniel_chat/entities/chat/model/chat.dart';
 import 'package:riniel_chat/entities/message/model/message.dart';
 import 'package:riniel_chat/entities/message/ui/bubble.dart';
 import 'package:riniel_chat/screens/chat/ui/bloc/bloc.dart';
-import 'package:riniel_chat/screens/chat/ui/message_composer/bloc/bloc.dart';
-import 'package:riniel_chat/screens/chat/ui/message_composer/message_composer.dart';
+import 'package:riniel_chat/screens/chat/ui/message_composer.dart';
 import 'package:riniel_chat/shared/ui/constants.dart';
 
 class ChatScreen extends StatelessWidget {
@@ -23,6 +22,7 @@ class ChatScreen extends StatelessWidget {
 
     return BlocProvider<ChatBloc>(
       create: (context) => .new(
+        chatId: chatId,
         chatRepository: chatRepository,
         characterRepository: characterRepository,
         messageRepository: messageRepository,
@@ -37,7 +37,7 @@ class ChatScreen extends StatelessWidget {
                 children: [
                   CharacterAvatar(
                     onTap: () =>
-                        context.read<ChatBloc>().add(ChatActorSwitched()),
+                        context.read<ChatBloc>().add(const ChatActorSwitched()),
                     avatarUri: state.character.value?.avatarUri,
                     name: state.actor.isUser
                         ? state.character.value?.name
@@ -69,7 +69,7 @@ class ChatScreen extends StatelessWidget {
                   return ListView.separated(
                     reverse: true,
                     separatorBuilder: (context, index) =>
-                        SizedBox(height: Sizes.xs),
+                        const SizedBox(height: Sizes.xs),
                     itemBuilder: (context, index) {
                       final message = asyncSnapshot.data!.elementAt(index);
 
@@ -93,30 +93,7 @@ class ChatScreen extends StatelessWidget {
               ),
             ),
 
-            BlocBuilder<ChatBloc, ChatState>(
-              builder: (context, state) {
-                return BlocProvider<MessageComposerBloc>(
-                  create: (context) => .new(),
-                  child: MessageComposer(
-                    onSubmit: (value) {
-                      print('qwer:author: ${state.messageAuthor?.id}');
-                      print('qwer:actor: ${state.actor}');
-
-                      context.read<ChatBloc>().add(
-                        ChatMessageSubmitted(
-                          .create(
-                            chatId: chatId,
-                            authorId: state.messageAuthor?.id,
-                            text: value.text,
-                            attachmentUri: value.attachment,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
+            const MessageComposer(),
           ],
         ),
       ),

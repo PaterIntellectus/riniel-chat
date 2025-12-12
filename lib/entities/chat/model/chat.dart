@@ -5,7 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:riniel_chat/entities/character/model/character.dart';
 import 'package:uuid/uuid.dart';
 
-extension type ChatId(String value) {}
+extension type const ChatId(String value) {}
 
 class ChatName with EquatableMixin {
   ChatName(String value) : value = value.trim() {

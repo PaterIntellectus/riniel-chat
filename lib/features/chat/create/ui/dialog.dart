@@ -36,7 +36,7 @@ class _CreateChatDialogState extends State<CreateChatDialog>
       create: (context) => .new(
         chatRepository: chatRepository,
         characterRepository: characterRepository,
-      )..add(CreateChatStarted()),
+      )..add(const CreateChatStarted()),
       child: MultiBlocListener(
         listeners: [
           BlocListener<CreateChatBloc, CreateChatState>(
@@ -101,7 +101,7 @@ class _CreateChatDialogState extends State<CreateChatDialog>
                           return FilledButton(
                             onPressed: state.canSubmit
                                 ? () => context.read<CreateChatBloc>().add(
-                                    CreateChatSubmitted(),
+                                    const CreateChatSubmitted(),
                                   )
                                 : null,
                             style: const .new(

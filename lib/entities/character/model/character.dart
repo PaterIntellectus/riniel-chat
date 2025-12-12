@@ -11,7 +11,7 @@ abstract interface class CharacterRepository {
   FutureOr<CharacterId> nextId();
 }
 
-extension type CharacterId(String value) {}
+extension type const CharacterId(String value) {}
 
 class Character with EquatableMixin {
   Character._valid({
@@ -27,32 +27,23 @@ class Character with EquatableMixin {
     }
   }
 
-  factory Character.create({
+  factory Character({
     required CharacterId id,
     required final String name,
     final Uri? avatarUri,
     final String note = '',
-  }) => ._valid(
-    id: id,
-    name: name,
-    note: note,
-    avatarUri: avatarUri,
-    createdAt: .now(),
-    updatedAt: .now(),
-  );
+  }) {
+    final now = DateTime.now();
+    return ._valid(
+      id: id,
+      name: name,
+      note: note,
+      avatarUri: avatarUri,
+      createdAt: now,
+      updatedAt: now,
+    );
+  }
 
-  final CharacterId id;
-  final String name;
-  final String note;
-  final Uri? avatarUri;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-
-  @override
-  List<Object?> get props => [id, name, note, avatarUri, createdAt, updatedAt];
-}
-
-extension CharacterMutator on Character {
   Character update({
     final String? name,
     final Uri? avatarUri,
@@ -71,4 +62,14 @@ extension CharacterMutator on Character {
   Character setAvatar(Uri avatarUri) => update(avatarUri: avatarUri);
 
   Character setNote(String note) => update(note: note);
+
+  final CharacterId id;
+  final String name;
+  final String note;
+  final Uri? avatarUri;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  @override
+  List<Object?> get props => [id, name, note, avatarUri, createdAt, updatedAt];
 }

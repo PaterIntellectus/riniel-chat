@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:memory_store/memory_store.dart';
 import 'package:riniel_chat/entities/character/model/character.dart';
-import 'package:riniel_chat/shared/data/memory/storage.dart';
 import 'package:uuid/uuid.dart';
 
 class InMemoryCharacterRepository implements CharacterRepository {
   const InMemoryCharacterRepository({
-    required InMemoryStorage<CharacterId, Character> memoryStorage,
+    required MemoryStore<CharacterId, Character> memoryStorage,
   }) : _memoryStorage = memoryStorage;
 
   @override
@@ -17,7 +17,7 @@ class InMemoryCharacterRepository implements CharacterRepository {
   List<Character> list() => _memoryStorage.list();
 
   @override
-  Character? find(CharacterId id) => _memoryStorage.find(id);
+  Character? find(CharacterId id) => _memoryStorage.find(id).value;
 
   @override
   void save(Character character) => _memoryStorage.save(character);
@@ -30,5 +30,5 @@ class InMemoryCharacterRepository implements CharacterRepository {
     return CharacterId(Uuid().v4());
   }
 
-  final InMemoryStorage<CharacterId, Character> _memoryStorage;
+  final MemoryStore<CharacterId, Character> _memoryStorage;
 }

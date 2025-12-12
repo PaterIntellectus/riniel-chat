@@ -29,12 +29,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             context.read(),
             context.read(),
           );
-          bloc.add(ChatsTabStarted());
+          bloc.add(const ChatsTabStarted());
           return bloc;
         },
         child: Builder(builder: (context) => ChatsTab(bloc: context.read())),
       ),
-      navBarItem: BottomNavigationBarItem(
+      navBarItem: const BottomNavigationBarItem(
         icon: Icon(Icons.chat),
         label: 'Чаты',
         tooltip: 'Список чатов',
@@ -45,14 +45,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       widget: BlocProvider(
         create: (context) {
           final bloc = CharacterListBloc(context.read());
-          bloc.add(CharacterListStarted());
+          bloc.add(const CharacterListStarted());
           return bloc;
         },
         child: Builder(
           builder: (context) => CharactersTab(bloc: context.read()),
         ),
       ),
-      navBarItem: BottomNavigationBarItem(
+      navBarItem: const BottomNavigationBarItem(
         icon: Icon(Icons.person),
         label: 'Персонажи',
         tooltip: 'Список персонажей',

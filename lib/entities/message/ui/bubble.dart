@@ -42,11 +42,11 @@ class MessageBubble extends StatelessWidget {
                 : Colors.grey[800]!,
             textDirection: textDirection,
           ),
-          size: Size(10, 10),
+          size: const Size(10, 10),
         ),
 
         Container(
-          padding: .symmetric(horizontal: Sizes.m, vertical: Sizes.s),
+          padding: const .symmetric(horizontal: Sizes.m, vertical: Sizes.s),
           constraints: BoxConstraints(minWidth: 0, maxWidth: maxWidth),
           decoration: BoxDecoration(
             color: textDirection == .rtl

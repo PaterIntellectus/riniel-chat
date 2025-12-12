@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:memory_store/memory_store.dart';
 import 'package:riniel_chat/app/ui/app.dart';
 import 'package:riniel_chat/entities/character/data/memory_repository.dart';
 import 'package:riniel_chat/entities/character/model/character.dart';
@@ -7,19 +8,18 @@ import 'package:riniel_chat/entities/chat/data/memory_repository.dart';
 import 'package:riniel_chat/entities/chat/model/chat.dart';
 import 'package:riniel_chat/entities/message/data/memory_repository.dart';
 import 'package:riniel_chat/entities/message/model/message.dart';
-import 'package:riniel_chat/shared/data/memory/storage.dart';
 
 void main() async {
   Bloc.observer = SimpleBlocObserver();
 
-  final characterMemoryStore = InMemoryStorage<CharacterId, Character>(
-    indexator: (value) => value.id,
+  final characterMemoryStore = MemoryStore<CharacterId, Character>(
+    identifier: (value) => value.id,
   );
   final characterRepository = InMemoryCharacterRepository(
     memoryStorage: characterMemoryStore,
   );
 
-  final firstCharacter = Character.create(
+  final firstCharacter = Character(
     id: characterRepository.nextId(),
     name: 'Egirec',
     avatarUri: null,
@@ -28,12 +28,12 @@ void main() async {
 
   characterMemoryStore.saveMany([
     firstCharacter,
-    .create(
+    .new(
       id: characterRepository.nextId(),
       name: 'Antonio Grazielle',
       avatarUri: null,
     ),
-    .create(
+    .new(
       id: characterRepository.nextId(),
       name: 'Pussy Slayer',
       avatarUri: null,
@@ -42,33 +42,37 @@ void main() async {
     ),
   ]);
 
-  final messageMemoryStore = InMemoryStorage<MessageId, Message>(
-    indexator: (value) => value.id,
+  final messageMemoryStore = MemoryStore<MessageId, Message>(
+    identifier: (value) => value.id,
   );
 
+  final messageRepository = InMemoryMessageRepository(messageMemoryStore);
+
   messageMemoryStore.saveMany([
-    .create(
-      chatId: .new('1'),
+    .new(
+      id: messageRepository.nextId(),
+      chatId: const .new('1'),
       authorId: firstCharacter.id,
       text: "hi",
       attachmentUri: null,
     ),
-    .create(
-      chatId: .new('1'),
-      authorId: .new('2'),
+    .new(
+      id: messageRepository.nextId(),
+      chatId: const .new('1'),
+      authorId: const .new('2'),
       text: "Hi, who are you?",
       attachmentUri: null,
     ),
   ]);
 
-  final memoryChatStorage = InMemoryStorage<ChatId, Chat>(
-    indexator: (value) => value.id,
+  final memoryChatStorage = MemoryStore<ChatId, Chat>(
+    identifier: (value) => value.id,
   );
 
   runApp(
     App(
       characterRepository: characterRepository,
-      messageRepository: InMemoryMessageRepository(messageMemoryStore),
+      messageRepository: messageRepository,
       chatRepository: InMemoryChatRepository(chatStorage: memoryChatStorage),
     ),
   );

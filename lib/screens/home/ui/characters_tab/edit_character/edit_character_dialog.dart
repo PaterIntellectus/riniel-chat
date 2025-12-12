@@ -85,8 +85,8 @@ class EditCharacterDialog extends StatelessWidget {
                               child: GestureDetector(
                                 onTap: () => context
                                     .read<EditCharacterBloc>()
-                                    .add(CharacterAvatarChanged('')),
-                                child: DecoratedBox(
+                                    .add(const CharacterAvatarChanged('')),
+                                child: const DecoratedBox(
                                   decoration: BoxDecoration(
                                     shape: .circle,
                                     color: Colors.black54,
@@ -159,11 +159,12 @@ class EditCharacterDialog extends StatelessWidget {
         footer: Row(
           mainAxisAlignment: .spaceBetween,
           children: [
-            FilledButton(onPressed: navigator.pop, child: Text('Отмена')),
+            FilledButton(onPressed: navigator.pop, child: const Text('Отмена')),
 
             FilledButton(
-              onPressed: () =>
-                  context.read<EditCharacterBloc>().add(CharacterSubmitted()),
+              onPressed: () => context.read<EditCharacterBloc>().add(
+                const CharacterSubmitted(),
+              ),
               style: const .new(
                 backgroundColor: WidgetStatePropertyAll(successColor),
               ),

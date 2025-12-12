@@ -27,8 +27,8 @@ class _CharacterManagementMenuState extends State<CharacterManagementMenu> {
       menuChildren: [
         if (widget.onEdited != null)
           MenuItemButton(
-            trailingIcon: Icon(Icons.edit_outlined),
-            child: Text('Редактировать'),
+            trailingIcon: const Icon(Icons.edit_outlined),
+            child: const Text('Редактировать'),
             onPressed: () async {
               // final updated = await showDialog(
               //   context: context,
@@ -44,12 +44,12 @@ class _CharacterManagementMenuState extends State<CharacterManagementMenu> {
 
         if (widget.onRemoved != null)
           MenuItemButton(
-            trailingIcon: Icon(Icons.delete),
-            child: Text('Удалить'),
+            trailingIcon: const Icon(Icons.delete),
+            child: const Text('Удалить'),
             onPressed: () async {
               final confirmed = await showDialog(
                 context: context,
-                builder: (context) => RemoveCharacterDialog(),
+                builder: (context) => const RemoveCharacterDialog(),
               );
 
               if (confirmed == true) {
@@ -59,7 +59,7 @@ class _CharacterManagementMenuState extends State<CharacterManagementMenu> {
           ),
       ],
       child: IconButton(
-        icon: Icon(Icons.more_vert),
+        icon: const Icon(Icons.more_vert),
         onPressed: () {
           if (_controller.isOpen) {
             _controller.close();

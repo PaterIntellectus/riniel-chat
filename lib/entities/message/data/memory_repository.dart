@@ -1,26 +1,32 @@
 import 'dart:async';
 
+import 'package:memory_store/memory_store.dart';
+import 'package:result/result.dart';
 import 'package:riniel_chat/entities/chat/model/chat.dart';
 import 'package:riniel_chat/entities/message/model/message.dart';
-import 'package:riniel_chat/shared/data/memory/storage.dart';
+import 'package:uuid/uuid.dart';
 
 class InMemoryMessageRepository implements MessageRepository {
-  const InMemoryMessageRepository(this.memoryStorage);
+  const InMemoryMessageRepository(this._memoryStore);
 
   @override
-  Stream<List<Message>> watch({required ChatId chatId}) => memoryStorage
-      .watch(filter: (message) => message.chatId == chatId)
+  Stream<List<Message>> watch({required ChatId? chatId}) => _memoryStore
+      .watch(filter: (message) => chatId == null || message.chatId == chatId)
       .map((event) => event.toList().reversed.toList());
 
   @override
-  List<Message> list({required ChatId chatId}) =>
-      memoryStorage.list(filter: (value) => value.chatId == chatId);
+  List<Message> list({required ChatId? chatId}) => _memoryStore.list(
+    filter: (value) => chatId == null || value.chatId == chatId,
+  );
 
   @override
-  void save(Message message) => memoryStorage.save(message);
+  Result<void> save(Message message) => .sync(() => _memoryStore.save(message));
 
   @override
-  void remove(MessageId id) => memoryStorage.remove(id);
+  Result<void> remove(MessageId id) => .sync(() => _memoryStore.remove(id));
 
-  final InMemoryStorage<MessageId, Message> memoryStorage;
+  @override
+  MessageId nextId() => .new(Uuid().v4());
+
+  final MemoryStore<MessageId, Message> _memoryStore;
 }

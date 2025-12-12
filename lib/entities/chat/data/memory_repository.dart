@@ -1,12 +1,11 @@
 import 'dart:async';
 
+import 'package:memory_store/memory_store.dart';
 import 'package:riniel_chat/entities/chat/model/chat.dart';
-import 'package:riniel_chat/shared/data/memory/storage.dart';
 
 class InMemoryChatRepository implements ChatRepository {
-  const InMemoryChatRepository({
-    required InMemoryStorage<ChatId, Chat> chatStorage,
-  }) : _chatStorage = chatStorage;
+  const InMemoryChatRepository({required MemoryStore<ChatId, Chat> chatStorage})
+    : _chatStorage = chatStorage;
 
   @override
   Stream<List<Chat>> watch() =>
@@ -19,7 +18,7 @@ class InMemoryChatRepository implements ChatRepository {
   void remove(ChatId id) => _chatStorage.remove(id);
 
   @override
-  Chat? find(final ChatId chatId) => _chatStorage.find(chatId);
+  Chat? find(final ChatId chatId) => _chatStorage.find(chatId).value;
 
-  final InMemoryStorage<ChatId, Chat> _chatStorage;
+  final MemoryStore<ChatId, Chat> _chatStorage;
 }

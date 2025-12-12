@@ -2,7 +2,7 @@ part of 'bloc.dart';
 
 enum CreateChatStatus { idle, loading, success, failure }
 
-typedef CreateChatCharacterList = AsyncValue<List<Character>>;
+typedef CreateChatCharacterList = AsyncState<List<Character>>;
 
 class ChatNameState with EquatableMixin {
   ChatNameState(String value, {required this.isDefault}) : value = value.trim();
@@ -58,7 +58,7 @@ class CreateChatState with EquatableMixin {
   bool get isCharacterSelected => selectedCharacter != null;
   bool get canSubmit => isCharacterSelected && chatName.value.isNotEmpty;
 
-  AsyncValue<UnmodifiableListView<Character>> get characters =>
+  AsyncState<UnmodifiableListView<Character>> get characters =>
       _characters.castValue((value) => value == null ? null : .new(value));
 }
 

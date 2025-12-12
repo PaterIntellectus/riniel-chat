@@ -42,7 +42,7 @@ class _CharactersTabState extends State<CharactersTab>
               Builder(
                 builder: (context) {
                   if (state.characters.isReloading) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   if (state.characters.hasError) {
@@ -54,12 +54,12 @@ class _CharactersTabState extends State<CharactersTab>
                   final characters = state.characters.requireValue;
 
                   if (characters.isEmpty) {
-                    return Center(child: Text('Список персонажей пуст'));
+                    return const Center(child: Text('Список персонажей пуст'));
                   }
 
                   return RefreshIndicator(
                     onRefresh: () async =>
-                        widget.bloc.add(CharacterListStarted()),
+                        widget.bloc.add(const CharacterListStarted()),
                     child: ListView.builder(
                       itemCount: characters.length,
                       itemBuilder: (context, index) {
@@ -105,14 +105,14 @@ class _CharactersTabState extends State<CharactersTab>
                 child: Builder(
                   builder: (context) {
                     return FloatingActionButton(
-                      child: Icon(Icons.add),
+                      child: const Icon(Icons.add),
                       onPressed: () async {
                         final character = await showDialog(
                           context: context,
                           builder: (context) => BlocProvider(
                             create: (context) =>
                                 EditCharacterBloc(context.read()),
-                            child: EditCharacterDialog(),
+                            child: const EditCharacterDialog(),
                           ),
                         );
 

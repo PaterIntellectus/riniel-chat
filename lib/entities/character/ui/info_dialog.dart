@@ -24,7 +24,7 @@ class CharacterInfoDialog extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: .all(Sizes.m),
+        padding: const .all(Sizes.m),
         child: Column(
           mainAxisAlignment: .center,
           crossAxisAlignment: .start,
@@ -32,7 +32,7 @@ class CharacterInfoDialog extends StatelessWidget {
           children: [
             if (hasNote) ...[
               Text(character.note, style: theme.textTheme.bodyMedium),
-              SizedBox(height: Sizes.s),
+              const SizedBox(height: Sizes.s),
             ],
 
             Text(

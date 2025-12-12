@@ -51,7 +51,7 @@ class EditCharacterBloc extends Bloc<EditCharacterEvent, EditCharacterState> {
 
       final character =
           state.initialCharacter ??
-          .create(
+          .new(
             id: characterId,
             name: state.name.value,
             avatarUri: Uri.parse(state.avatarPath),

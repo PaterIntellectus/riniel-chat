@@ -29,7 +29,7 @@ class ChatsTabChat with EquatableMixin {
   List<Object?> get props => [chatId, chatName, chatAvatarUri, lastMessage];
 }
 
-typedef ChatsTabChatList = AsyncValue<List<ChatsTabChat>>;
+typedef ChatsTabChatList = AsyncState<List<ChatsTabChat>>;
 
 class ChatsTabState with EquatableMixin {
   const ChatsTabState({required ChatsTabChatList chats}) : _chats = chats;
@@ -42,7 +42,7 @@ class ChatsTabState with EquatableMixin {
   @override
   List<Object?> get props => [_chats];
 
-  AsyncValue<UnmodifiableListView<ChatsTabChat>> get chats => _chats.castValue(
+  AsyncState<UnmodifiableListView<ChatsTabChat>> get chats => _chats.castValue(
     (value) => value == null ? null : UnmodifiableListView(value),
   );
 }
